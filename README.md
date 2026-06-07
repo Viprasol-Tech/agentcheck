@@ -17,6 +17,10 @@ _Built and maintained by **Viprasol Tech**._
 
 </div>
 
+<p align="center">
+  <img src="docs/assets/demo.svg" width="820" alt="agentcheck demo" />
+</p>
+
 ---
 
 ## What is this?
@@ -55,7 +59,10 @@ RESULT: PASS
 
 Now the agent regresses — it geocodes Paris to the wrong country and forgets to
 actually create the flight booking. `agentcheck run` fails CI and prints exactly
-what changed:
+what changed (this is the output rendered in the hero image above):
+
+<details>
+<summary>Plain-text version</summary>
 
 ```text
 $ npx agentcheck run --dir example          # agent regressed -> FAIL (exit 1)
@@ -71,6 +78,8 @@ FAIL   book-a-flight  (tolerant mode)
 agentcheck: 0 passed, 2 failed, 2 total
 RESULT: FAIL
 ```
+
+</details>
 
 The same report renders as a PR comment via the GitHub Action:
 
