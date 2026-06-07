@@ -1,0 +1,33 @@
+{
+  "finalOutput": "It is 18C and partly cloudy in Paris.",
+  "input": "What's the weather in Paris right now?",
+  "meta": {
+    "runId": "[REDACTED]",
+    "startedAt": "[REDACTED]"
+  },
+  "scenario": "weather-in-paris",
+  "steps": [
+    {
+      "args": {
+        "country": "FR",
+        "query": "Paris"
+      },
+      "meta": {
+        "latencyMs": "[REDACTED]"
+      },
+      "tool": "geocode"
+    },
+    {
+      "args": {
+        "lat": 48.8566,
+        "lon": 2.3522,
+        "units": "celsius"
+      },
+      "meta": {
+        "latencyMs": "[REDACTED]"
+      },
+      "tool": "get_weather"
+    }
+  ],
+  "version": 1
+}

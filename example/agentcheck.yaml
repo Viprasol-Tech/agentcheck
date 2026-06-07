@@ -1,0 +1,21 @@
+# agentcheck example configuration.
+# Run from the repo root with:  npx tsx bin/agentcheck.ts run --dir example
+agent: ./agent.ts
+snapshotDir: .agentcheck/snapshots
+mode: tolerant
+
+# Volatile fields to strip before snapshotting / comparing. Supports a `*`
+# wildcard segment for array indices and object keys.
+redact:
+  - meta.runId
+  - meta.startedAt
+  - steps.*.meta.latencyMs
+
+# Extra paths ignored only in tolerant mode (in addition to redaction).
+ignore: []
+
+scenarios:
+  - name: weather-in-paris
+    input: What's the weather in Paris right now?
+  - name: book-a-flight
+    input: Book me a flight from San Francisco to New York on Dec 1 2025.

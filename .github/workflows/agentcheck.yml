@@ -1,0 +1,19 @@
+# Example: run agentcheck on every pull request and comment the diff.
+name: agentcheck
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  agentcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Viprasol-Tech/agentcheck@v0.1.0
+        with:
+          dir: example
+          comment: "true"

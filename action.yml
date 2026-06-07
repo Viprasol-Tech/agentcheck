@@ -1,0 +1,101 @@
+name: "agentcheck"
+description: "Regression testing for AI agents — snapshot tool-calls and fail CI when they change."
+author: "Viprasol Tech Private Limited"
+branding:
+  icon: "git-commit"
+  color: "purple"
+
+inputs:
+  dir:
+    description: "Directory containing agentcheck.yaml."
+    required: false
+    default: "."
+  config:
+    description: "Explicit path to agentcheck.yaml (overrides 'dir')."
+    required: false
+    default: ""
+  agent:
+    description: "Path to the agent module (overrides the 'agent' key in the config)."
+    required: false
+    default: ""
+  comment:
+    description: "Post the diff as a PR comment ('true' / 'false')."
+    required: false
+    default: "true"
+  node-version:
+    description: "Node.js version to use."
+    required: false
+    default: "20"
+
+outputs:
+  result:
+    description: "'pass' or 'fail'."
+    value: ${{ steps.run.outputs.result }}
+  summary-file:
+    description: "Path to the generated markdown summary."
+    value: ${{ steps.run.outputs.summary-file }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Run agentcheck
+      id: run
+      shell: bash
+      run: |
+        set -o pipefail
+        SUMMARY="$RUNNER_TEMP/agentcheck-summary.md"
+        ARGS=(run)
+        if [ -n "${{ inputs.config }}" ]; then
+          ARGS+=(--config "${{ inputs.config }}")
+        else
+          ARGS+=(--dir "${{ inputs.dir }}")
+        fi
+        if [ -n "${{ inputs.agent }}" ]; then
+          ARGS+=(--agent "${{ inputs.agent }}")
+        fi
+        ARGS+=(--md "$SUMMARY")
+
+        set +e
+        npx --yes agentcheck "${ARGS[@]}"
+        CODE=$?
+        set -e
+
+        echo "summary-file=$SUMMARY" >> "$GITHUB_OUTPUT"
+        if [ -f "$SUMMARY" ]; then
+          cat "$SUMMARY" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        if [ "$CODE" -eq 0 ]; then
+          echo "result=pass" >> "$GITHUB_OUTPUT"
+        else
+          echo "result=fail" >> "$GITHUB_OUTPUT"
+        fi
+        exit $CODE
+
+    - name: Comment diff on PR
+      if: ${{ always() && inputs.comment == 'true' && github.event_name == 'pull_request' }}
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = process.env.AGENTCHECK_SUMMARY || '${{ steps.run.outputs.summary-file }}';
+          if (!path || !fs.existsSync(path)) {
+            core.info('No agentcheck summary file to post.');
+            return;
+          }
+          const body = fs.readFileSync(path, 'utf8');
+          const marker = '<!-- agentcheck-comment -->';
+          const fullBody = marker + '\n' + body;
+          const { owner, repo } = context.repo;
+          const issue_number = context.issue.number;
+          const comments = await github.rest.issues.listComments({ owner, repo, issue_number });
+          const existing = comments.data.find((c) => c.body && c.body.includes(marker));
+          if (existing) {
+            await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body: fullBody });
+          } else {
+            await github.rest.issues.createComment({ owner, repo, issue_number, body: fullBody });
+          }

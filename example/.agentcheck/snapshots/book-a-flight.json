@@ -1,0 +1,43 @@
+{
+  "finalOutput": "Booked flight UA-512 from SFO to JFK, seat 14C.",
+  "input": "Book me a flight from San Francisco to New York on Dec 1 2025.",
+  "meta": {
+    "runId": "[REDACTED]",
+    "startedAt": "[REDACTED]"
+  },
+  "scenario": "book-a-flight",
+  "steps": [
+    {
+      "args": {
+        "date": "2025-12-01",
+        "from": "SFO",
+        "to": "JFK"
+      },
+      "meta": {
+        "latencyMs": "[REDACTED]"
+      },
+      "tool": "search_flights"
+    },
+    {
+      "args": {
+        "flightId": "UA-512",
+        "seat": "14C"
+      },
+      "meta": {
+        "latencyMs": "[REDACTED]"
+      },
+      "tool": "select_flight"
+    },
+    {
+      "args": {
+        "flightId": "UA-512",
+        "passengers": 1
+      },
+      "meta": {
+        "latencyMs": "[REDACTED]"
+      },
+      "tool": "create_booking"
+    }
+  ],
+  "version": 1
+}

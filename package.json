@@ -1,0 +1,59 @@
+{
+  "name": "agentcheck",
+  "version": "0.1.0",
+  "description": "Drop-in regression testing for AI agents. Snapshot tool-calls and fail CI when they change.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Viprasol Tech Private Limited",
+  "homepage": "https://github.com/Viprasol-Tech/agentcheck#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Viprasol-Tech/agentcheck.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Viprasol-Tech/agentcheck/issues"
+  },
+  "keywords": [
+    "ai-agents",
+    "regression-testing",
+    "snapshot-testing",
+    "llm",
+    "tool-calls",
+    "ci",
+    "github-action",
+    "testing",
+    "agents",
+    "mcp"
+  ],
+  "bin": {
+    "agentcheck": "dist/bin/agentcheck.js"
+  },
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist",
+    "action.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "demo": "tsx bin/agentcheck.ts run --dir example",
+    "cli": "tsx bin/agentcheck.ts"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.14.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
